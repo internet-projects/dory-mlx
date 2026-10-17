@@ -52,7 +52,7 @@ python scripts/check.py out-bf16 --ref /path/to/NVIDIA-Nemotron-Labs-Dory1.0-4B-
 | WikiText-2 test perplexity, loops 1 / 2 / 4 | bf16 12.17 / 11.76 / 11.69, 8-bit 12.18 / 11.77 / 11.70 |
 | Sliding-window caches, window shrunk to 64 | top-1 agreement at least 98.7%, KL at most 0.0006 |
 
-For NVIDIA's own accuracy results, see the [original model card](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16). Recommended build: 8-bit, which matches bf16 within 0.003 and is half the size.
+For NVIDIA's own accuracy results, see the [original model card](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16). Recommended build: 8-bit, which stays very close to bf16 (KL 0.003, top-1 agreement 98%) and is half the size.
 
 Speed on a MacBook Pro M5 Max (128 GB), single runs, approximate: decode about 35 / 26 / 15 tokens/s at 1 / 2 / 4 loops for the 8-bit build and about 27 / 20 / 12 for bf16; peak memory with a 24K-token prompt 7.7 / 9.0 / 11.5 GB (8-bit) and 11.3 / 12.6 / 15.1 GB (bf16).
 
