@@ -54,7 +54,27 @@ python scripts/check.py out-bf16 --ref /path/to/NVIDIA-Nemotron-Labs-Dory1.0-4B-
 
 For NVIDIA's own accuracy results, see the [original model card](https://huggingface.co/nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16). Recommended build: 8-bit, which stays very close to bf16 (KL 0.003, top-1 agreement 98%) and is half the size.
 
-Speed on a MacBook Pro M5 Max (128 GB), single runs, approximate: decode about 35 / 26 / 15 tokens/s at 1 / 2 / 4 loops for the 8-bit build and about 27 / 20 / 12 for bf16; peak memory with a 24K-token prompt 7.7 / 9.0 / 11.5 GB (8-bit) and 11.3 / 12.6 / 15.1 GB (bf16).
+## Speed and memory
+
+Measured on a MacBook Pro M5 Max (128 GB) on 20 October 2026, with no other models running; medians of repeated runs (run-to-run spread about 2%).
+
+**8-bit**
+
+| Loops | Generation, short prompt | Generation after a 32K-token prompt | Reading a 32K-token prompt | Peak memory, 32K-token prompt |
+|---|---|---|---|---|
+| 1 | 101 tokens/s | 82 tokens/s | 3,200 tokens/s (10 s) | 7.7 GB |
+| 2 | 69 tokens/s | 54 tokens/s | 1,980 tokens/s (17 s) | 9.0 GB |
+| 4 | 39 tokens/s | 31 tokens/s | 1,070 tokens/s (31 s) | 11.5 GB |
+
+**bf16**
+
+| Loops | Generation, short prompt | Generation after a 32K-token prompt | Reading a 32K-token prompt | Peak memory, 32K-token prompt |
+|---|---|---|---|---|
+| 1 | 58 tokens/s | 55 tokens/s | 3,270 tokens/s (10 s) | 11.3 GB |
+| 2 | 39 tokens/s | 36 tokens/s | 2,180 tokens/s (15 s) | 12.6 GB |
+| 4 | 23 tokens/s | 22 tokens/s | 1,270 tokens/s (26 s) | 15.1 GB |
+
+With the Dory model file proposed for MLX-LM itself ([mlx-lm PR 1988](https://github.com/ml-explore/mlx-lm/pull/1988)), MLX-LM's batch generation serves several requests at once: about 200 tokens/s in total for 4 requests and 450 tokens/s for 16 (8-bit, 2 loops).
 
 ## Notes
 
