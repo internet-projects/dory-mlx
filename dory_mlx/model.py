@@ -312,8 +312,12 @@ class Model(nn.Module):
         a = self.args
         caches = [None] * n
         use_sliding = a.recurrent_kv_cache_mode == "per_loop"
+        lo, hi = a.n_input_layers, a.n_input_layers + a.n_recurrent_layers
         for (i, _l), idx in plan.items():
-            if use_sliding and a.layer_types[i] == "sliding_attention":
+            recurrent = lo <= i < hi
+            # In last_loop mode the recurrent layers need a full KVCache: later loops
+            # rewind cache.offset and overwrite the same slots. Input/output layers never loop.
+            if a.layer_types[i] == "sliding_attention" and (use_sliding or not recurrent):
                 caches[idx] = RingKVCache(a.sliding_window)
             else:
                 caches[idx] = KVCache()
