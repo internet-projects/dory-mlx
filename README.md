@@ -39,6 +39,7 @@ The converter fuses the query/key/value/gate projections and the MLP gate/up pro
 pip install torch safetensors numpy         # only for the reference comparison
 python scripts/check.py out-8bit             # cache and sliding-window consistency
 python scripts/check.py out-bf16 --ref /path/to/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16   # also vs an independent fp32 PyTorch implementation
+pip install pytest && python -m pytest tests # cache tests on a tiny random model (no download, CPU or Metal)
 ```
 
 `scripts/dory_ref_torch.py` is a plain PyTorch implementation written from the vLLM code, independent of the MLX one, used to check the port.
@@ -78,7 +79,7 @@ With the Dory model file proposed for MLX-LM itself ([mlx-lm PR 1988](https://gi
 
 ## Notes
 
-English text in, text out; replies include the reasoning chain. Verified with prompts up to 24K tokens. Cache modes: `per_loop` (default, matches NVIDIA's launch commands) and `last_loop`.
+English text in, text out; replies include the reasoning chain. Verified with prompts up to 24K tokens. Cache modes: `per_loop` (default, matches NVIDIA's launch commands) keeps a cache for each loop of the shared layers, and `last_loop` keeps only the last loop's (less memory at 4 loops, slightly different outputs). In both modes the sliding-window layers outside the loop keep only the last 1,024 tokens.
 
 ## How it was written
 
